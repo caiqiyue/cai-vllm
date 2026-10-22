@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cai-vllm"
+version = "0.2.0"
+authors = [{ name = "caiqiyue", email = "1019751142@qq.com" }]
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+description = "An educational, lightweight vLLM implementation built from scratch"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "torch>=2.4.0",
+    "triton>=3.0.0",
+    "transformers>=4.51.0",
+    "flash-attn",
+    "xxhash",
+]
+
+[project.urls]
+Homepage = "https://github.com/caiqiyue/cai-vllm"
+Repository = "https://github.com/caiqiyue/cai-vllm.git"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nanovllm*"]

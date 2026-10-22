@@ -1,0 +1,54 @@
+{
+  "project": "CAI-vLLM",
+  "last_updated": "2026-10-22",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true
+  },
+  "status_legend": {
+    "not_started": "Work has not begun.",
+    "in_progress": "The single active task.",
+    "blocked": "Work cannot continue until a recorded blocker is resolved.",
+    "passing": "Verification passed and evidence is recorded."
+  },
+  "features": [
+    {
+      "id": "feat-001",
+      "priority": 1,
+      "area": "repository",
+      "title": "Bootstrap owned repository harness",
+      "user_visible_behavior": "Contributors can clone CAI-vLLM, follow one documented startup path, and see truthful task and verification state.",
+      "status": "passing",
+      "verification": [
+        "Run bash ./init.sh from the repository root",
+        "Confirm exactly one feature is reported as active",
+        "Confirm Python syntax, package metadata, and repository hygiene pass",
+        "Confirm unavailable GPU dependencies are reported explicitly as SKIP",
+        "Confirm README links point to caiqiyue/cai-vllm"
+      ],
+      "dependencies": [],
+      "evidence": ["evidence/feat-001-2026-10-22.md"],
+      "notes": "Covers repository re-initialization, harness scaffolding, package metadata, and README refresh."
+    },
+    {
+      "id": "feat-002",
+      "priority": 2,
+      "area": "verification",
+      "title": "Validate CUDA inference journey",
+      "user_visible_behavior": "A contributor with supported NVIDIA hardware can load Qwen3 and generate text through the documented API.",
+      "status": "in_progress",
+      "verification": [
+        "Install the project on a supported Linux and CUDA environment",
+        "Download or provide a Qwen3-compatible checkpoint",
+        "Run example.py with CAI_VLLM_REQUIRE_GPU=1 verification enabled",
+        "Confirm generated output is returned without runtime errors",
+        "Record hardware, dependency versions, command, and output in evidence/"
+      ],
+      "dependencies": ["feat-001"],
+      "evidence": [],
+      "notes": "Requires CUDA-capable hardware; routine CPU-only startup may explicitly skip this path."
+    }
+  ]
+}
+
