@@ -21,3 +21,12 @@
 - Completed: repository identity, importable package layout, L2 harness, README, and cross-platform lightweight verification.
 - Known environment issue: installed PyTorch cannot load on this Windows/Python environment; the harness reports this as an explicit `SKIP` unless GPU verification is required.
 
+### Session 002 — README learning-repository update
+
+- Date: 2026-10-22
+- Goal: reposition README as source-code-first with `docs/` as supporting AI Infra inference notes.
+- Completed: removed the legacy logo and benchmark promotion, added the code map and reading path, and created `docs/README.md` as the learning-note index.
+- Repository policy: `docs/` contains learning content only; development design and execution artifacts remain untracked.
+- Verification: both Harness entry points passed control checks; all local Markdown links resolve; evidence is in `evidence/feat-003-2026-10-22.md`.
+- Next: `feat-002` remains the sole active feature and requires supported CUDA hardware.
+

@@ -48,6 +48,24 @@
       "dependencies": ["feat-001"],
       "evidence": [],
       "notes": "Requires CUDA-capable hardware; routine CPU-only startup may explicitly skip this path."
+    },
+    {
+      "id": "feat-003",
+      "priority": 3,
+      "area": "documentation",
+      "title": "Reframe repository learning guide",
+      "user_visible_behavior": "Readers see CAI-vLLM as a source-code-first AI Infra inference learning repository and can navigate to its supporting notes.",
+      "status": "passing",
+      "verification": [
+        "Confirm README contains no logo image or assets/logo.png reference",
+        "Confirm README presents source code before learning notes",
+        "Open every local Markdown link in README and confirm its target exists",
+        "Confirm docs/README.md labels unwritten topics as pending",
+        "Run ./init.ps1 and bash ./init.sh"
+      ],
+      "dependencies": ["feat-001"],
+      "evidence": ["evidence/feat-003-2026-10-22.md"],
+      "notes": "README is source-code-first; docs/ is reserved for learner-facing AI Infra inference notes."
     }
   ]
 }

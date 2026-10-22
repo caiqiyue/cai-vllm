@@ -7,5 +7,6 @@ The detailed session log is maintained in `claude-progress.md`.
 - Standard verification: `bash ./init.sh`
 - Full GPU gate: `CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh`
 - Verified feature: `feat-001` with evidence in `evidence/feat-001-2026-10-22.md`.
+- Verified feature: `feat-003` with evidence in `evidence/feat-003-2026-10-22.md`.
 - Known blocker: local PyTorch DLL loading prevents `feat-002` runtime verification on this host.
 

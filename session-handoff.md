@@ -3,12 +3,14 @@
 ## Verified Now
 
 - `feat-001` passed the Windows and WSL lightweight harness checks; evidence is in `evidence/feat-001-2026-10-22.md`.
+- `feat-003` passed documentation and link verification; evidence is in `evidence/feat-003-2026-10-22.md`.
 
 ## Changed This Session
 
 - Restored the importable `nanovllm/` source-package path.
 - Added project-specific harness instructions, state, workflows, and cross-platform verification entry points.
 - Prepared package metadata and README for the `caiqiyue/cai-vllm` repository.
+- Reframed README as source-code-first and added `docs/README.md` for learner-facing notes only.
 
 ## Broken Or Unverified
 
