@@ -30,3 +30,12 @@
 - Verification: both Harness entry points passed control checks; all local Markdown links resolve; evidence is in `evidence/feat-003-2026-10-22.md`.
 - Next: `feat-002` remains the sole active feature and requires supported CUDA hardware.
 
+### Session 003 — Server GPU 0 deployment attempt
+
+- Date: 2026-10-25
+- Server repository synchronized from GitHub at commit `0cf8279`.
+- Created `/mnt/public/caiqiyue_file/conda-envs/cai-vllm` with Python 3.11.
+- Verified PyTorch `2.7.1+cu126` CUDA smoke on physical GPU 0 (`NVIDIA GeForce RTX 2080 Ti`) with `CUDA_VISIBLE_DEVICES=0`.
+- Installed Triton, Transformers, NumPy, and xxhash.
+- Full CAI-vLLM import/generation remains unverified because FlashAttention wheel compilation stalled; evidence is in `evidence/feat-002-2026-10-25-server-gpu0.md`.
+

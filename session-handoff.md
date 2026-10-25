@@ -16,6 +16,7 @@
 
 - Local PyTorch cannot load `torch_python.dll`, so CUDA inference is not verified on this host.
 - Full Qwen3 model inference requires a supported CUDA environment and model weights.
+- Server GPU 0 CUDA smoke passed on 2026-10-25; full CAI-vLLM inference is still blocked by the FlashAttention build in the new environment.
 
 ## Next Best Step
 
@@ -28,4 +29,11 @@
 - Startup: `bash ./init.sh`
 - Windows startup: `./init.ps1`
 - Required GPU gate: `CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh`
+
+## Server deployment state
+
+- Repository: `/mnt/public/caiqiyue_file/cai-vllm` at `0cf8279`
+- Environment: `/mnt/public/caiqiyue_file/conda-envs/cai-vllm`
+- GPU restriction: `CUDA_DEVICE_ORDER=PCI_BUS_ID` and `CUDA_VISIBLE_DEVICES=0`
+- Next step: diagnose or provide a compatible FlashAttention build, then run the Qwen3 generation path without downloading weights during routine checks.
 
