@@ -173,6 +173,15 @@ print(outputs[0]["text"])
 
 完整生成示例见 [`example.py`](example.py)，性能实验入口见 [`bench.py`](bench.py)。运行两者均需要兼容的 NVIDIA GPU、CUDA 运行时和模型权重。
 
+学习普通 PyTorch Attention 路径时，可以直接运行自包含脚本。脚本会自动设置 GPU 0、项目路径和 `CAI_VLLM_ATTENTION_BACKEND=torch`，默认使用服务器上的 Qwen3-4B 路径，也可以传入其他模型目录：
+
+```bash
+python scripts/torch_fallback_smoke.py
+python scripts/torch_fallback_smoke.py /YOUR/MODEL/PATH --max-tokens 32
+```
+
+该脚本会提交两条 Prompt，覆盖批量 Prefill、Decode、Paged KV Cache、采样和文本输出。FlashAttention、CUDA Graph 和 Tensor Parallel 等优化路径不在该学习脚本中启用。
+
 ## 学习笔记
 
 [`docs/`](docs/README.md) 专门用于保存面向学习者的 AI Infra 推理笔记，包括推理基础、模型执行、显存与 KV Cache、调度与批处理、算子优化以及服务化工程等主题。
