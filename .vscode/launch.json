@@ -41,6 +41,23 @@
                 "CAI_VLLM_ATTENTION_BACKEND": "torch",
                 "PYTHONPATH": "${workspaceFolder}"
             }
+        },
+        {
+            "name": "CAI-vLLM: Prefix Cache 调试",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/prefix_cache_smoke.py",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "python": "/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
+                "CUDA_VISIBLE_DEVICES": "0",
+                "CAI_VLLM_ATTENTION_BACKEND": "torch",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }

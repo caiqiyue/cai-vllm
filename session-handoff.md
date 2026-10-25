@@ -53,8 +53,7 @@ The sections above contain historical notes. Use this section as the current sta
 ### Verified server state
 
 - Repository: `/mnt/public/caiqiyue_file/cai-vllm`
-- Latest GitHub handoff commit: `dc9a263`
-- Server last confirmed synchronized commit: `0a39b12`; retry `git pull --ff-only origin main` before using the latest documentation.
+- Latest GitHub/server handoff commit: `a3b8fdf`
 - Environment: `/mnt/public/caiqiyue_file/conda-envs/cai-vllm`
 - GPU: physical GPU 0, NVIDIA GeForce RTX 2080 Ti
 - Backend: `CAI_VLLM_ATTENTION_BACKEND=torch`
