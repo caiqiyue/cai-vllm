@@ -30,6 +30,26 @@
 | [`README.md`](README.md)                               | ✅ 已落地 | 给人看的项目说明、阶段表与笔记索引                                                                    |
 | `docs/` 7 个政策文档                                   | ❌ 未建   | 本项目 1 人维护,L1/L2 档位够用,**按需再加**                                                         |
 
+### CAI-vLLM 运行时验证脚本矩阵
+
+以下脚本是当前项目的实际运行验证入口；它们不替代 `init.sh`，而是补充 GPU/模型行为验证。所有服务器脚本都固定使用物理 GPU 0 和 `CAI_VLLM_ATTENTION_BACKEND=torch`。
+
+| 脚本 | 已覆盖 | 尚未覆盖 |
+| --- | --- | --- |
+| `scripts/torch_fallback_smoke.py` | LLM API、Tokenizer、批量 Prefill、Decode、Scheduler、Qwen3、PyTorch Attention、Paged KV Cache、采样、文本输出 | FlashAttention、CUDA Graph、Tensor Parallel、Prefix Cache 命中、抢占和长上下文压力 |
+| `scripts/prefix_cache_smoke.py` | 两次真实生成、相同长前缀、Prefix Cache Block 复用 | FlashAttention、CUDA Graph、Tensor Parallel、抢占和压力测试 |
+| `tests/test_attention_backend.py` | PyTorch Attention Prefill、Decode、GQA、KV Cache 写入/读取 | 真实模型权重和 FlashAttention |
+| `tests/test_torch_fallback_smoke.py` | 脚本环境配置与单卡约束 | GPU 模型执行 |
+
+可复现实例：
+
+```bash
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/torch_fallback_smoke.py
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/prefix_cache_smoke.py
+```
+
+该矩阵是当前交接状态的依据；新增或改变验证入口时，应同步更新 `evidence/`、`claude-progress.md` 和 `session-handoff.md`。
+
 **agent 每次开工的最短路径**:
 
 ```bash

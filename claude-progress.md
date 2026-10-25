@@ -40,3 +40,10 @@
 - Full CAI-vLLM import/generation remains unverified because FlashAttention wheel compilation stalled; evidence is in `evidence/feat-002-2026-10-25-server-gpu0.md`.
 - Added and verified the PyTorch Attention fallback: two unit tests, the required GPU gate, and a real Qwen3-4B generation succeeded on GPU 0 without FlashAttention. FlashAttention remains an optional unverified acceleration path; evidence is in `evidence/feat-002-2026-10-25-torch-fallback.md`.
 
+### Session 004 — Prefix Cache and handoff alignment
+
+- Date: 2026-10-25
+- Added `scripts/prefix_cache_smoke.py`, which generated two prompts with a 300-token shared prefix and reported `reusable_prefix_blocks=1` on GPU 0.
+- Documented the runtime verification matrix in `harness.md`, `README.md`, and the handoff artifacts.
+- Full current script coverage and remaining unverified paths are recorded in `evidence/feat-002-2026-10-25-prefix-cache.md`.
+

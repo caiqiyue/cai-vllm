@@ -182,6 +182,14 @@ python scripts/torch_fallback_smoke.py /YOUR/MODEL/PATH --max-tokens 32
 
 该脚本会提交两条 Prompt，覆盖批量 Prefill、Decode、Paged KV Cache、采样和文本输出。FlashAttention、CUDA Graph 和 Tensor Parallel 等优化路径不在该学习脚本中启用。
 
+验证 Prefix Cache 可以运行：
+
+```bash
+python scripts/prefix_cache_smoke.py
+```
+
+该脚本先生成一个带有长公共前缀的 Prompt，再生成拥有相同前缀、不同后缀的第二个 Prompt，并输出可复用的前缀 Block 数量。
+
 ## 学习笔记
 
 [`docs/`](docs/README.md) 专门用于保存面向学习者的 AI Infra 推理笔记，包括推理基础、模型执行、显存与 KV Cache、调度与批处理、算子优化以及服务化工程等主题。
