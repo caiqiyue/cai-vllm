@@ -24,6 +24,82 @@ CAI-vLLM 是一个以源码实践为主、学习笔记为辅的 AI Infra 推理�
 | [`nanovllm/layers/`](nanovllm/layers/) | 推理基础算子 | Attention、线性并行层、归一化与采样 |
 | [`nanovllm/utils/`](nanovllm/utils/) | 执行上下文与权重加载 | 推理上下文传递、Safetensors 加载 |
 
+## 项目架构
+
+CAI-vLLM 是一个离线批量生成型推理引擎，调用链从用户 API 开始，经过请求调度、KV Cache 管理、GPU 模型执行和采样，最后返回生成文本：
+
+```text
+LLM.generate(prompts, sampling_params)
+        │
+        ▼
+LLMEngine：请求队列与生成循环
+        │
+        ├── Scheduler：Prefill/Decode 调度、批处理、抢占
+        │       │
+        │       └── BlockManager：Paged KV Cache、Prefix Cache、块生命周期
+        │
+        ▼
+ModelRunner：输入准备、模型执行、采样、CUDA Graph、Tensor Parallel
+        │
+        ├── Qwen3ForCausalLM：Qwen3 Transformer
+        │       ├── Embedding / LM Head
+        │       ├── RMSNorm
+        │       ├── Attention / RoPE / GQA
+        │       └── SwiGLU MLP
+        │
+        └── Sampler：根据 logits 和温度选择下一个 Token
+```
+
+### 1. 用户接口层
+
+- `nanovllm/llm.py`：暴露 `LLM` 类，保持 `from nanovllm import LLM` 的使用方式。
+- `nanovllm/sampling_params.py`：定义温度、最大生成长度和 EOS 行为等采样参数。
+
+### 2. 推理引擎层
+
+- `nanovllm/engine/llm_engine.py`：创建 Tokenizer、Scheduler 和 ModelRunner，接收请求并循环执行 `step()`，直到所有序列结束。
+- `nanovllm/engine/sequence.py`：保存一条序列的 Prompt、已生成 Token、状态、缓存 Token 数和 Block Table。
+- `nanovllm/engine/scheduler.py`：维护 waiting/running 队列，在 Prefill 和 Decode 之间切换，支持批处理和显存不足时的抢占。
+- `nanovllm/engine/block_manager.py`：把 KV Cache 划分成固定大小的块，负责分配、释放、引用计数、Prefix Cache 哈希和序列到物理块的映射。
+
+### 3. 模型执行层
+
+- `nanovllm/engine/model_runner.py`：把序列状态转换成 GPU 输入，分别准备 Prefill/Decode 张量，分配 KV Cache，执行模型、采样和多进程 Tensor Parallel 调用。
+- `nanovllm/utils/context.py`：在 Attention 算子和 ModelRunner 之间传递当前批次的 cu-seqlens、slot mapping、context lengths 和 block tables。
+- `nanovllm/utils/loader.py`：从模型目录加载 Safetensors 权重并映射到实现中的参数。
+
+### 4. Qwen3 模型层
+
+- `nanovllm/models/qwen3.py`：实现 Qwen3 的 Decoder Layer、Attention、MLP、Embedding 和 LM Head。
+- Attention 使用 GQA、RoPE 和 Q/K 归一化；MLP 使用 SwiGLU；线性层通过 Tensor Parallel 层支持多 GPU 切分。
+
+### 5. 算子与后端层
+
+- `nanovllm/layers/attention.py`：实现 KV Cache 写入、Paged Attention，以及 FlashAttention 和 PyTorch SDPA 两种后端。
+- `nanovllm/layers/linear.py`：实现列并行、行并行和 QKV 并行线性层。
+- `nanovllm/layers/rotary_embedding.py`：实现 RoPE 位置编码。
+- `nanovllm/layers/layernorm.py`：实现 RMSNorm。
+- `nanovllm/layers/activation.py`：实现 SwiGLU 所需的 SiLU 与乘法融合。
+- `nanovllm/layers/embed_head.py`：实现词表并行 Embedding 和并行 LM Head。
+- `nanovllm/layers/sampler.py`：把 logits 转换为下一个 Token。
+
+Attention 后端可通过环境变量选择：
+
+```bash
+export CAI_VLLM_ATTENTION_BACKEND=torch  # 学习和调试用的 PyTorch SDPA 路径
+export CAI_VLLM_ATTENTION_BACKEND=flash  # 已安装 FlashAttention 时使用快速路径
+export CAI_VLLM_ATTENTION_BACKEND=auto   # 默认：优先 FlashAttention，否则回退到 PyTorch
+```
+
+### 6. 一次生成的执行顺序
+
+1. `LLM.generate` 把 Prompt 编码成 Token，并加入 Scheduler 的 waiting 队列。
+2. Scheduler 在 Prefill 阶段为序列分配 Block，并计算需要处理的 Prompt Token。
+3. ModelRunner 执行 Qwen3，Attention 将 K/V 写入 Paged KV Cache。
+4. Scheduler 进入 Decode 阶段，每轮为运行中的序列准备一个 Token。
+5. Attention 从 KV Cache 读取历史上下文，Sampler 选择新的 Token。
+6. 生成到 EOS 或达到 `max_tokens` 后释放 Block，返回文本和 Token ID。
+
 当前实现覆盖：
 
 - 离线批量推理；
