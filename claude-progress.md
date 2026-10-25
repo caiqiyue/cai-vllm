@@ -38,4 +38,5 @@
 - Verified PyTorch `2.7.1+cu126` CUDA smoke on physical GPU 0 (`NVIDIA GeForce RTX 2080 Ti`) with `CUDA_VISIBLE_DEVICES=0`.
 - Installed Triton, Transformers, NumPy, and xxhash.
 - Full CAI-vLLM import/generation remains unverified because FlashAttention wheel compilation stalled; evidence is in `evidence/feat-002-2026-10-25-server-gpu0.md`.
+- Added and verified the PyTorch Attention fallback: two unit tests, the required GPU gate, and a real Qwen3-4B generation succeeded on GPU 0 without FlashAttention. FlashAttention remains an optional unverified acceleration path; evidence is in `evidence/feat-002-2026-10-25-torch-fallback.md`.
 

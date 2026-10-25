@@ -46,7 +46,7 @@
         "Record hardware, dependency versions, command, and output in evidence/"
       ],
       "dependencies": ["feat-001"],
-      "evidence": ["evidence/feat-002-2026-10-25-server-gpu0.md"],
+      "evidence": ["evidence/feat-002-2026-10-25-server-gpu0.md", "evidence/feat-002-2026-10-25-torch-fallback.md"],
       "notes": "Requires CUDA-capable hardware; routine CPU-only startup may explicitly skip this path."
     },
     {
