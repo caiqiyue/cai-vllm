@@ -59,6 +59,15 @@ def store_kvcache(key: torch.Tensor, value: torch.Tensor, k_cache: torch.Tensor,
     store_kvcache_kernel[(N,)](key, key.stride(0), value, value.stride(0), k_cache, v_cache, slot_mapping, D)
 
 
+def store_kvcache_torch(key: torch.Tensor, value: torch.Tensor, k_cache: torch.Tensor, v_cache: torch.Tensor, slot_mapping: torch.Tensor):
+    slots = slot_mapping.to(torch.long)
+    valid = slots >= 0
+    flat_k_cache = k_cache.reshape(-1, key.size(1), key.size(2))
+    flat_v_cache = v_cache.reshape(-1, value.size(1), value.size(2))
+    flat_k_cache[slots[valid]] = key[valid]
+    flat_v_cache[slots[valid]] = value[valid]
+
+
 class Attention(nn.Module):
 
     def __init__(
@@ -134,10 +143,14 @@ class Attention(nn.Module):
 
     def forward(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor):
         context = get_context()
+        backend = select_attention_backend()
         k_cache, v_cache = self.k_cache, self.v_cache
         if k_cache.numel() and v_cache.numel():
-            store_kvcache(k, v, k_cache, v_cache, context.slot_mapping)
-        if select_attention_backend() == "torch":
+            if backend == "torch":
+                store_kvcache_torch(k, v, k_cache, v_cache, context.slot_mapping)
+            else:
+                store_kvcache(k, v, k_cache, v_cache, context.slot_mapping)
+        if backend == "torch":
             return self._forward_torch(q, k, v)
         if context.is_prefill:
             if context.block_tables is not None:    # prefix cache
