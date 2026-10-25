@@ -18,7 +18,7 @@ def main():
     )
     outputs = llm.generate(
         ["Say hello in one short sentence."],
-        SamplingParams(temperature=0.0, max_tokens=8),
+        SamplingParams(temperature=0.6, max_tokens=8),
         use_tqdm=False,
     )
     print(outputs)
