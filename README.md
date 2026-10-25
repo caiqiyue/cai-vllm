@@ -33,6 +33,14 @@ CAI-vLLM 是一个以源码实践为主、学习笔记为辅的 AI Infra 推理�
 - FlashAttention、Triton、Torch 编译与 CUDA Graph；
 - Qwen3 模型加载和温度采样。
 
+Attention 后端默认使用 `auto`：安装 FlashAttention 时走高性能 CUDA 路径，否则自动回退到 PyTorch SDPA。也可以显式选择普通 PyTorch 路径：
+
+```bash
+export CAI_VLLM_ATTENTION_BACKEND=torch
+```
+
+`torch` 后端保留 Paged KV Cache 和 GQA，但速度通常低于 FlashAttention；`flash` 后端在依赖缺失时会给出明确错误。
+
 ## 源码阅读路线
 
 建议先跑通一次生成，再沿调用链向下阅读：
