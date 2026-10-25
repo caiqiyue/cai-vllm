@@ -71,6 +71,7 @@ class TorchAttentionBackendTest(unittest.TestCase):
             dropout_p=0.0,
             scale=head_dim ** -0.5,
         ).squeeze(0).squeeze(1)
+        expected = expected.unsqueeze(0)
         torch.testing.assert_close(actual, expected)
 
 
