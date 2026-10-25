@@ -2,4 +2,4 @@ from nanovllm.engine.llm_engine import LLMEngine
 
 
 class LLM(LLMEngine):
-    pass
+    """Public API facade; the inference behavior is implemented by LLMEngine."""

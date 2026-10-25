@@ -2,15 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CAI-vLLM: GPU0 Torch Attention 推理",
+            "name": "CAI-vLLM: 从 smoke 脚本启动并调试 LLMEngine",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/scripts/torch_fallback_smoke.py",
-            "args": [],
+            "args": [
+                "--max-tokens",
+                "16"
+            ],
             "cwd": "${workspaceFolder}",
             "python": "/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python",
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "justMyCode": false,
             "env": {
                 "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
                 "CUDA_VISIBLE_DEVICES": "0",
