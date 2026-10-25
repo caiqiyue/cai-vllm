@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CAI-vLLM: GPU0 Torch Attention 推理",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/torch_fallback_smoke.py",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "python": "/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
+                "CUDA_VISIBLE_DEVICES": "0",
+                "CAI_VLLM_ATTENTION_BACKEND": "torch",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "CAI-vLLM: Attention 回归测试",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "unittest",
+            "args": [
+                "tests.test_attention_backend",
+                "tests.test_torch_fallback_smoke",
+                "-v"
+            ],
+            "cwd": "${workspaceFolder}",
+            "python": "/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
+                "CUDA_VISIBLE_DEVICES": "0",
+                "CAI_VLLM_ATTENTION_BACKEND": "torch",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        }
+    ]
+}
