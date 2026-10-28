@@ -35,6 +35,8 @@
             "python": "/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python",
             "console": "integratedTerminal",
             "justMyCode": true,
+            "subProcess": false,
+            "logToFile": true,
             "env": {
                 "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
                 "CUDA_VISIBLE_DEVICES": "0",

@@ -16,19 +16,19 @@ class Sequence:
     counter = count()
 
     def __init__(self, token_ids: list[int], sampling_params = SamplingParams()):
-        self.seq_id = next(Sequence.counter)
-        self.status = SequenceStatus.WAITING
-        self.token_ids = copy(token_ids)
-        self.last_token = token_ids[-1]
-        self.num_tokens = len(self.token_ids)
+        self.seq_id = next(Sequence.counter)# 1 sequence 的编号
+        self.status = SequenceStatus.WAITING#waiting 状态
+        self.token_ids = copy(token_ids)#列表 token_id
+        self.last_token = token_ids[-1]#最后一个 token
+        self.num_tokens = len(self.token_ids)# 12个token
         self.num_prompt_tokens = len(token_ids)
         self.num_cached_tokens = 0
         self.num_scheduled_tokens = 0
         self.is_prefill = True
         self.block_table = []
-        self.temperature = sampling_params.temperature
-        self.max_tokens = sampling_params.max_tokens
-        self.ignore_eos = sampling_params.ignore_eos
+        self.temperature = sampling_params.temperature#0.6
+        self.max_tokens = sampling_params.max_tokens#16
+        self.ignore_eos = sampling_params.ignore_eos#false
 
     def __len__(self):
         return self.num_tokens

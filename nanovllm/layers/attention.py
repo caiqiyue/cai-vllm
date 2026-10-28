@@ -78,10 +78,10 @@ class Attention(nn.Module):
         num_kv_heads,
     ):
         super().__init__()
-        self.num_heads = num_heads
-        self.head_dim = head_dim
-        self.scale = scale
-        self.num_kv_heads = num_kv_heads
+        self.num_heads = num_heads#32
+        self.head_dim = head_dim#128
+        self.scale = scale#0.0883
+        self.num_kv_heads = num_kv_heads#8
         self.k_cache = self.v_cache = torch.tensor([])
 
     @staticmethod
