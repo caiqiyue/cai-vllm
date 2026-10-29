@@ -8,6 +8,7 @@
 - Full GPU gate: `CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh`
 - Current active feature: `feat-002` — Validate CUDA inference journey
 - Current blocker: local PyTorch fails to load `torch_python.dll`; GPU/runtime smoke must be verified on a supported environment.
+- Learner-facing notes: `docs/nano-vllm-inference-flow.md` documents the full inference chain and per-component mechanisms (`feat-004`, passing).
 
 ## Session Log
 
@@ -46,4 +47,15 @@
 - Added `scripts/prefix_cache_smoke.py`, which generated two prompts with a 300-token shared prefix and reported `reusable_prefix_blocks=1` on GPU 0.
 - Documented the runtime verification matrix in `harness.md`, `README.md`, and the handoff artifacts.
 - Full current script coverage and remaining unverified paths are recorded in `evidence/feat-002-2026-10-25-prefix-cache.md`.
+
+### Session 005 — Inference flow learning note
+
+- Date: 2026-10-29
+- Goal: turn the completed read-through of the `torch_fallback_smoke.py` debug session into a durable learning artifact.
+- Added `docs/nano-vllm-inference-flow.md`: component map, ten-stage breakdown, ten per-component mechanism chapters, tensor/shape contract table, constant provenance table, a frame-by-frame walkthrough of the smoke-script parameters, six typical execution paths, a failure-mode table, and an explicit pending-verification list.
+- Registered the note as the shared entry point in `docs/README.md`, `README.md`, and `harness.md`.
+- Recorded the work as `feat-004` in both feature-list copies; `feat-002` remains the only `in_progress` feature and its blocker is unchanged.
+- Verification: local Markdown link check over `docs/**/*.md` and the root `README.md` reported 0 broken links; `bash ./init.sh` passed L0–L3 and reported an explicit `SKIP` for the GPU/runtime smoke on this host. Evidence is in `evidence/feat-004-2026-10-29-inference-flow-doc.md`.
+- Known limitation recorded in the note: unverified server-side numbers (26 KV blocks, prompt lengths 12/7) and the flash-vs-torch numerical equivalence are marked as pending verification rather than stated as fact.
+- Reviewer note: the note's depth and structure were judged unsatisfactory by the requester on first delivery; it is committed as a v1 baseline to be revised, not as a finished study.
 

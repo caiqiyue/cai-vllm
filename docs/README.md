@@ -15,16 +15,18 @@
 
 ## 笔记路线
 
+**先读这一篇**：[nano-vLLM 推理全流程与关键组件机制](nano-vllm-inference-flow.md) —— 覆盖整条推理链路的组件全景、阶段拆解与机制详解，是下面各专题的公共基础。
+
 当前目录刚建立，以下主题均为规划内容；在正文完成并经过源码或实验核对之前，一律标记为“待补充”。
 
 | 方向 | 计划内容 | 对应源码 | 状态 |
 | --- | --- | --- | --- |
-| 推理基础 | Autoregressive Decoding、Prefill/Decode、吞吐与时延 | [`engine/llm_engine.py`](../nanovllm/engine/llm_engine.py) | 待补充 |
-| 模型执行 | Qwen3 结构、GQA、QK Norm、RoPE、SwiGLU | [`models/qwen3.py`](../nanovllm/models/qwen3.py) | 待补充 |
-| 显存与 KV Cache | Paged KV Cache、Block Table、Prefix Caching | [`engine/block_manager.py`](../nanovllm/engine/block_manager.py) | 待补充 |
-| 调度与批处理 | Continuous Batching、抢占、序列状态 | [`engine/scheduler.py`](../nanovllm/engine/scheduler.py) | 待补充 |
-| 算子与性能 | FlashAttention、Triton、CUDA Graph、Torch 编译 | [`layers/`](../nanovllm/layers/) | 待补充 |
-| 并行推理 | Tensor Parallelism、权重切分与进程协作 | [`layers/linear.py`](../nanovllm/layers/linear.py) | 待补充 |
+| 推理基础 | Autoregressive Decoding、Prefill/Decode、吞吐与时延 | [`engine/llm_engine.py`](../nanovllm/engine/llm_engine.py) | 流程部分见 [推理全流程](nano-vllm-inference-flow.md)，专题待补充 |
+| 模型执行 | Qwen3 结构、GQA、QK Norm、RoPE、SwiGLU | [`models/qwen3.py`](../nanovllm/models/qwen3.py) | 流程部分见 [推理全流程](nano-vllm-inference-flow.md)，专题待补充 |
+| 显存与 KV Cache | Paged KV Cache、Block Table、Prefix Caching | [`engine/block_manager.py`](../nanovllm/engine/block_manager.py) | 机制部分见 [推理全流程](nano-vllm-inference-flow.md)，专题待补充 |
+| 调度与批处理 | Continuous Batching、抢占、序列状态 | [`engine/scheduler.py`](../nanovllm/engine/scheduler.py) | 机制部分见 [推理全流程](nano-vllm-inference-flow.md)，专题待补充 |
+| 算子与性能 | FlashAttention、Triton、CUDA Graph、Torch 编译 | [`layers/`](../nanovllm/layers/) | 机制部分见 [推理全流程](nano-vllm-inference-flow.md)，专题待补充 |
+| 并行推理 | Tensor Parallelism、权重切分与进程协作 | [`layers/linear.py`](../nanovllm/layers/linear.py) | 机制部分见 [推理全流程](nano-vllm-inference-flow.md)，专题待补充 |
 | 服务化工程 | 动态批处理、流式输出、指标与稳定性 | 当前源码尚未覆盖 | 待补充 |
 
 ## 笔记约定

@@ -28,6 +28,7 @@
 | [`session-handoff.md`](session-handoff.md)             | ✅ 已落地 | 交接卡,当前是**P2 阶段 Qwen3 开发接手须知**                                                           |
 | [`clean-state-checklist.md`](clean-state-checklist.md) | ✅ 已落地 | 收班清单,6 项通用 + 3 项本项目特有                                                                    |
 | [`README.md`](README.md)                               | ✅ 已落地 | 给人看的项目说明、阶段表与笔记索引                                                                    |
+| [`docs/nano-vllm-inference-flow.md`](docs/nano-vllm-inference-flow.md) | ✅ 已落地 | **推理全流程与关键组件机制**学习笔记:组件全景、十个执行阶段、逐组件机制、逐帧走查、待验证清单(`feat-004`) |
 | `docs/` 7 个政策文档                                   | ❌ 未建   | 本项目 1 人维护,L1/L2 档位够用,**按需再加**                                                         |
 
 ### CAI-vLLM 运行时验证脚本矩阵

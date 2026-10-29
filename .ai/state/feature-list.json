@@ -1,6 +1,6 @@
 {
   "project": "CAI-vLLM",
-  "last_updated": "2026-10-22",
+  "last_updated": "2026-10-29",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -66,6 +66,25 @@
       "dependencies": ["feat-001"],
       "evidence": ["evidence/feat-003-2026-10-22.md"],
       "notes": "README is source-code-first; docs/ is reserved for learner-facing AI Infra inference notes."
+    },
+    {
+      "id": "feat-004",
+      "priority": 4,
+      "area": "documentation",
+      "title": "Document the nano-vLLM inference flow",
+      "user_visible_behavior": "A reader can understand the whole nano-vLLM inference chain and the internal mechanism of each key component without reading the source line by line.",
+      "status": "passing",
+      "verification": [
+        "Confirm docs/nano-vllm-inference-flow.md covers the component map, the stage breakdown, and the per-component mechanism chapters",
+        "Confirm every implementation claim in the note links to a concrete source location",
+        "Confirm unverified claims are marked as pending verification instead of being stated as fact",
+        "Confirm every local Markdown link under docs/ and in README resolves",
+        "Confirm docs/README.md registers the note as the shared entry point",
+        "Run bash ./init.sh"
+      ],
+      "dependencies": ["feat-001"],
+      "evidence": ["evidence/feat-004-2026-10-29-inference-flow-doc.md"],
+      "notes": "Learning note only; no nanovllm source, test, or runtime script was changed. feat-002 remains the single in_progress feature."
     }
   ]
 }

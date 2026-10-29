@@ -129,7 +129,7 @@ export CAI_VLLM_ATTENTION_BACKEND=torch
 6. 进入 [`qwen3.py`](nanovllm/models/qwen3.py)，追踪 Transformer 层和 Attention 数据流。
 7. 最后阅读 [`nanovllm/layers/`](nanovllm/layers/)，理解张量并行线性层、RoPE、RMSNorm、Attention 与 Sampler。
 
-配套概念和阅读记录统一收录在 [AI Infra 推理学习笔记](docs/README.md)。
+配套概念和阅读记录统一收录在 [AI Infra 推理学习笔记](docs/README.md)。整条推理链路的组件全景、阶段拆解与关键组件机制说明，见 [nano-vLLM 推理全流程与关键组件机制](docs/nano-vllm-inference-flow.md)。
 
 ## 环境要求
 
@@ -193,6 +193,8 @@ python scripts/prefix_cache_smoke.py
 ## 学习笔记
 
 [`docs/`](docs/README.md) 专门用于保存面向学习者的 AI Infra 推理笔记，包括推理基础、模型执行、显存与 KV Cache、调度与批处理、算子优化以及服务化工程等主题。
+
+推荐入口是 [nano-vLLM 推理全流程与关键组件机制](docs/nano-vllm-inference-flow.md)：它梳理了一次生成请求经过的全部组件、十个执行阶段，以及 `Sequence`、`Scheduler`、`BlockManager`、`ModelRunner`、Paged KV Cache、Attention 后端、CUDA Graph 和 Tensor Parallel 各自的内部机制，可作为其余专题笔记的公共基础。
 
 学习笔记服务于源码理解，但不替代源码。涉及实现行为时，以当前代码和可复现验证结果为准。
 

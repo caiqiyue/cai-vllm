@@ -74,3 +74,55 @@ cd /mnt/public/caiqiyue_file/cai-vllm
 CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh
 ```
 
+## Current Handoff Override — 2026-10-29
+
+The sections above contain historical notes. Use this section as the current state.
+
+### State changes this session
+
+| Item | Before | After |
+| --- | --- | --- |
+| Active feature | `feat-002` | `feat-002` (unchanged, still `in_progress`) |
+| Feature list | 3 features | 4 features (`feat-004` added, `passing`) |
+| Learner notes | `docs/README.md` index only | `docs/nano-vllm-inference-flow.md` added and indexed |
+
+`feat-002` blocker is unchanged: local PyTorch cannot load `torch_python.dll`, so the GPU/runtime smoke stays an explicit `SKIP` on this host.
+
+### New artifact
+
+- `docs/nano-vllm-inference-flow.md` — the nano-vLLM inference chain: component map, ten-stage breakdown, ten per-component mechanism chapters (`Sequence`, `Scheduler`, `BlockManager`, Paged KV Cache, `ModelRunner`/`Context`, Attention backends, memory budget, CUDA Graph, Tensor Parallel, sampling), tensor/shape contract table, constant provenance table, a frame-by-frame walkthrough of the `torch_fallback_smoke.py` parameters, six typical execution paths, a failure-mode table, and a pending-verification list.
+- Registered in `docs/README.md`, root `README.md`, and `harness.md`.
+- No `nanovllm/` source, test, or runtime script was changed.
+
+### Unverified or disabled
+
+- Server-side numbers quoted in the note (26 KV blocks, prompt lengths 12 and 7) come from the earlier script debug session and were not reproduced on this host; they are labeled as pending verification in the note.
+- torch-vs-flash numerical equivalence and the flash paged-path `cu_seqlens_k` offset semantics remain code-derived conclusions only.
+- FlashAttention installation/build is still unresolved.
+- CUDA Graph is still disabled with `enforce_eager=True` in every script.
+- Tensor Parallel and shared-memory worker paths are still untested; the scope stays GPU 0 only.
+- Scheduler preemption, chunked-prefill stress, long-context pressure, and benchmark throughput are still uncovered.
+
+### Known quality issue with the new note
+
+The requester judged the first delivery of `docs/nano-vllm-inference-flow.md` unsatisfactory. It is committed as a v1 baseline, not as a finished study. The next session should revise it before treating it as the authoritative learning artifact.
+
+### Next best step
+
+- Highest-priority active feature: `feat-002`. Passing still requires a real Qwen3 generation run on supported NVIDIA hardware with evidence under `evidence/`.
+- Secondary: revise `docs/nano-vllm-inference-flow.md` per the requester's feedback, and turn the unverified items in its section 10 into real server-side experiments.
+
+### Reproduction commands
+
+```bash
+cd /mnt/public/caiqiyue_file/cai-vllm
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/torch_fallback_smoke.py
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/prefix_cache_smoke.py
+CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh
+```
+
+```bash
+cd /mnt/public/caiqiyue_file/cai-vllm
+bash ./init.sh          # lightweight verification, L4 reports SKIP without CUDA
+```
+
