@@ -183,8 +183,11 @@ unless the warm request reuses at least one full block and prefills strictly few
 
 ### Next best step
 
-- `feat-005`: drive preemption, chunked prefill, and one `enforce_eager=False` (CUDA Graph) run
-  on server GPU 0, then record the evidence.
+- `feat-005`: deepen the **prefix cache** verification on server GPU 0 — concurrent reuse of a
+  shared block through reference counting, hashing of blocks filled during decode, and
+  invalidation when a cached block is taken over by a different prompt.
+- Out of scope for `feat-005`: scheduler preemption, chunked-prefill stress, CUDA Graph,
+  Tensor Parallel, FlashAttention.
 - The local server operations manual stays git-ignored and unpushed by request.
 
 ### Reproduction commands

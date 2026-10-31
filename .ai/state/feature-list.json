@@ -90,18 +90,19 @@
       "id": "feat-005",
       "priority": 5,
       "area": "verification",
-      "title": "Cover the remaining GPU scheduler paths",
-      "user_visible_behavior": "A contributor with supported NVIDIA hardware can observe preemption, chunked prefill, and CUDA Graph behaviour instead of an empty coverage list.",
+      "title": "Extend prefix cache verification",
+      "user_visible_behavior": "A contributor can see how the prefix cache behaves beyond one shared block: concurrent reuse, decode-phase caching, and cache invalidation, each with recorded evidence.",
       "status": "in_progress",
       "verification": [
-        "Drive a preemption and a chunked-prefill scenario on server GPU 0 and record the outputs",
-        "Run one generation with enforce_eager disabled to check the CUDA Graph path",
-        "Confirm every scenario produces evidence under evidence/",
-        "Update harness.md and session-handoff.md with the verified coverage"
+        "Verify on server GPU 0 that two concurrent requests sharing a prefix block keep that block alive through reference counting",
+        "Verify on server GPU 0 that a block filled during the decode phase is hashed and reused by a later request",
+        "Verify on server GPU 0 that a cached block taken over by a different prompt is invalidated instead of serving stale KV",
+        "Record every scenario under evidence/ and keep scripts/prefix_cache_smoke.py as the single entry point",
+        "Keep docs/nano-vllm-inference-flow.md consistent with the verified behaviour"
       ],
       "dependencies": ["feat-002"],
       "evidence": [],
-      "notes": "Successor to feat-002, which passed on 2026-10-31. Scope is limited to the uncovered runtime paths listed in the handoff; FlashAttention remains blocked on its own build issue and is out of scope."
+      "notes": "Scope stays inside the prefix cache topic. Scheduler preemption, chunked-prefill stress, CUDA Graph, Tensor Parallel, and FlashAttention are out of scope; FlashAttention also remains blocked on its own build issue."
     }
   ]
 }

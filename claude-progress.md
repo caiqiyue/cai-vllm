@@ -6,7 +6,7 @@
 - Standard startup path: `bash ./init.sh` or `./init.ps1`
 - Standard lightweight verification path: `bash ./init.sh`
 - Full GPU gate: `CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh` (on the server add `export CAI_VLLM_PYTHON=/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python`)
-- Current active feature: `feat-005` — Cover the remaining GPU scheduler paths
+- Current active feature: `feat-005` — Extend prefix cache verification
 - `feat-002` passed on 2026-10-31 on server GPU 0: harness gate L0–L4 `[PASS]` under `CAI_VLLM_REQUIRE_GPU=1` and `example.py` generated text from the real Qwen3-4B checkpoint.
 - Local blocker (unchanged): this Windows host cannot load `torch_python.dll`, so the local GPU gate stays an explicit `SKIP`.
 - Learner-facing notes: `docs/nano-vllm-inference-flow.md` documents the full inference chain and per-component mechanisms (`feat-004`, passing).
@@ -77,7 +77,7 @@
 - Prefix cache (server GPU 0, RTX 2080 Ti): `cold prefill_tokens=262 cached_tokens=0`, `warm prefill_tokens=6 cached_tokens=256`, `saved_prefill_tokens=256`, `prefix_cache_hit=YES`.
 - Two blockers found and fixed: `init.sh` used a bare `python` (absent on the server, so the GPU gate died at L0) and `example.py` hard-coded a local model path. `init.sh` now resolves `python` → `python3` and honours `CAI_VLLM_PYTHON`; `example.py` takes the model path and memory limits as arguments.
 - GPU gate on the server: L0–L4 all `[PASS]` with `CAI_VLLM_REQUIRE_GPU=1` (`torch=2.7.1+cu126 cuda=True`); `example.py` returned generated text from `/mnt/public/gw/LLM_model/Qwen3-4B-Instruct-2507`.
-- Status: `feat-002` → `passing`; `feat-005` (remaining GPU scheduler paths) created as the single `in_progress` feature so the harness invariant still holds.
+- Status: `feat-002` → `passing`; `feat-005` (extend prefix cache verification) created as the single `in_progress` feature so the harness invariant still holds. It was deliberately scoped to the prefix cache topic only: scheduler preemption, chunked-prefill stress, CUDA Graph, Tensor Parallel, and FlashAttention are out of scope.
 - Evidence: `evidence/feat-002-2026-10-31-server-gpu0-gate.md` and the updated `evidence/feat-002-2026-10-31-prefix-cache-engine-level.md`.
 - Note: the local server operations manual (`第二阶段_提示词服务器运维终版手册_2026-08-21.md`) stays git-ignored and was not pushed, by explicit request.
 
