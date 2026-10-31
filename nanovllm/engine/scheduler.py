@@ -32,7 +32,7 @@ class Scheduler:
             remaining = self.max_num_batched_tokens - num_batched_tokens# 512 代表一个 batch 所有样本token总和不能超过 512 
             if remaining == 0:
                 break
-            if not seq.block_table:
+            if not seq.block_table:#如果这个 sequence还没有被分配 block，就开始分配
                 num_cached_blocks = self.block_manager.can_allocate(seq)# 返回 0 ，应该是判断是否可以给seq 分配kv cache block；返回 -1 应该表示 kv cache block 不够分了
                 if num_cached_blocks == -1:
                     break

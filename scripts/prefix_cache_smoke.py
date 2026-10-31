@@ -32,7 +32,7 @@ def main(model=DEFAULT_MODEL):
         gpu_memory_utilization=0.85,
     )
     sampling_params = SamplingParams(temperature=0.6, max_tokens=2)
-    common_prefix = "cache " * 300
+    common_prefix = "cache " * 300 #每个prompt前面加了 300 个 cache 词，一来：可以让block存满，block存满了才会进行hash；二来：相同的前缀，就可以测试 prefix cache 命中了
     first_prompt = common_prefix + "Explain the first question."
     second_prompt = common_prefix + "Explain the second question."
 

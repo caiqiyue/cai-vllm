@@ -75,10 +75,10 @@ class BlockManager:
         h = -1
         num_cached_blocks = 0
         num_new_blocks = seq.num_blocks# 0 
-        for i in range(seq.num_blocks - 1):
+        for i in range(seq.num_blocks - 1):#这个 sequence 需要占用多少个 block 本次prompt 305 个token 那就占用 2个 block
             token_ids = seq.block(i)
-            h = self.compute_hash(token_ids, h)
-            block_id = self.hash_to_block_id.get(h, -1)
+            h = self.compute_hash(token_ids, h)# block 存满 会计算 hash  7155241987979788609
+            block_id = self.hash_to_block_id.get(h, -1)#hash_to_block_id block 和 hash 值 的 对应关系
             if block_id == -1 or self.blocks[block_id].token_ids != token_ids:
                 break
             num_cached_blocks += 1

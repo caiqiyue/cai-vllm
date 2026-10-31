@@ -44,7 +44,7 @@ class LLMEngine:
             'max_model_len'}
         """
         config = Config(model, **config_kwargs) #更新配置
-        Sequence.block_size = config.kvcache_block_size #256  sequence 是啥？ 样本的最长字段？
+        Sequence.block_size = config.kvcache_block_size #256  一个kv cache block 最多存储 256 个token
         self.ps = []
         self.events = []
         ctx = mp.get_context("spawn")# mp 是 multiprocessing
