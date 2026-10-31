@@ -1,6 +1,6 @@
 {
   "project": "CAI-vLLM",
-  "last_updated": "2026-10-29",
+  "last_updated": "2026-10-31",
   "rules": {
     "single_active_feature": true,
     "passing_requires_evidence": true,
@@ -46,8 +46,8 @@
         "Record hardware, dependency versions, command, and output in evidence/"
       ],
       "dependencies": ["feat-001"],
-      "evidence": ["evidence/feat-002-2026-10-25-server-gpu0.md", "evidence/feat-002-2026-10-25-torch-fallback.md", "evidence/feat-002-2026-10-25-prefix-cache.md"],
-      "notes": "Requires CUDA-capable hardware; routine CPU-only startup may explicitly skip this path."
+      "evidence": ["evidence/feat-002-2026-10-25-server-gpu0.md", "evidence/feat-002-2026-10-25-torch-fallback.md", "evidence/feat-002-2026-10-25-prefix-cache.md", "evidence/feat-002-2026-10-31-prefix-cache-engine-level.md"],
+      "notes": "Requires CUDA-capable hardware; routine CPU-only startup may explicitly skip this path. The prefix cache smoke script was rewritten to verify the engine-level hit; the rewritten run is still pending on server GPU 0."
     },
     {
       "id": "feat-003",

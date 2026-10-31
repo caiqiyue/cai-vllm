@@ -59,3 +59,12 @@
 - Known limitation recorded in the note: unverified server-side numbers (26 KV blocks, prompt lengths 12/7) and the flash-vs-torch numerical equivalence are marked as pending verification rather than stated as fact.
 - Reviewer note: the note's depth and structure were judged unsatisfactory by the requester on first delivery; it is committed as a v1 baseline to be revised, not as a finished study.
 
+### Session 006 — Prefix cache smoke rewritten to engine-level verification
+
+- Date: 2026-10-31
+- Goal: fix the gap that `scripts/prefix_cache_smoke.py` never proved a real prefix cache hit.
+- Finding: the old script only called `BlockManager.can_allocate()` on a hand-built `Sequence` before the second request, so `reusable_prefix_blocks=1` proved only that the hash index held an entry, not that the engine reused the KV block.
+- Change: the script now builds token-level prompts sharing exactly one full block, wraps `llm.scheduler.schedule` to record the engine's real `num_cached_tokens` / `num_scheduled_tokens`, and asserts the cold/warm prefill contract; added `tests/test_prefix_cache_smoke.py` (4 CPU-only cases). No `nanovllm/` source changed.
+- Verification: `python -m unittest tests.test_prefix_cache_smoke tests.test_torch_fallback_smoke -v` → `Ran 5 tests ... OK`; `bash ./init.sh` → L0–L3 `[PASS]`, L4 `[SKIP]` (local PyTorch cannot load `torch_python.dll`, unchanged blocker).
+- Pending: the rewritten script has not been run on server GPU 0 yet; evidence is `evidence/feat-002-2026-10-31-prefix-cache-engine-level.md`. `feat-002` remains the sole `in_progress` feature.
+

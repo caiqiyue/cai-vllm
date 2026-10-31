@@ -126,3 +126,36 @@ cd /mnt/public/caiqiyue_file/cai-vllm
 bash ./init.sh          # lightweight verification, L4 reports SKIP without CUDA
 ```
 
+## Current Handoff Override — 2026-10-31
+
+### State changes this session
+
+| Item | Before | After |
+| --- | --- | --- |
+| `scripts/prefix_cache_smoke.py` | pre-check only (`can_allocate` on a hand-built `Sequence`) | engine-level verification of the real scheduler hit |
+| `tests/` | 2 files | 3 files (`tests/test_prefix_cache_smoke.py` added, CPU-only) |
+| Active feature | `feat-002` | `feat-002` (unchanged, still `in_progress`) |
+
+### Why the old script was not enough
+
+`reusable_prefix_blocks=1` came from `BlockManager.can_allocate()` called **before** the second
+request on a throw-away `Sequence`. That only proves the hash index holds an entry; it never
+looked at the reuse that actually happens inside `Scheduler.schedule()` → `allocate()`. The script
+now records the engine's real `num_cached_tokens` / `num_scheduled_tokens` per step and fails
+unless the warm request reuses at least one full block and prefills strictly fewer tokens.
+
+### Verified now (this host)
+
+- `python -m unittest tests.test_prefix_cache_smoke tests.test_torch_fallback_smoke -v` → `Ran 5 tests ... OK`.
+- `bash ./init.sh` → L0–L3 `[PASS]`, L4 `[SKIP]` (local PyTorch cannot load `torch_python.dll`).
+- Evidence: `evidence/feat-002-2026-10-31-prefix-cache-engine-level.md`.
+
+### Next best step
+
+- Run the rewritten script on server GPU 0 and record the measured numbers:
+  `/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/prefix_cache_smoke.py`
+  (expect `warm cached_tokens=256`, `saved_prefill_tokens=256`, `prefix_cache_hit=YES`).
+- `feat-002` still needs a real Qwen3 generation run on supported hardware to become `passing`.
+- Unchanged: FlashAttention unresolved, CUDA Graph disabled, Tensor Parallel and scheduler
+  preemption / chunked-prefill stress still uncovered.
+

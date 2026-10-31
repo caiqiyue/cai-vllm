@@ -38,9 +38,10 @@
 | 脚本 | 已覆盖 | 尚未覆盖 |
 | --- | --- | --- |
 | `scripts/torch_fallback_smoke.py` | LLM API、Tokenizer、批量 Prefill、Decode、Scheduler、Qwen3、PyTorch Attention、Paged KV Cache、采样、文本输出 | FlashAttention、CUDA Graph、Tensor Parallel、Prefix Cache 命中、抢占和长上下文压力 |
-| `scripts/prefix_cache_smoke.py` | 两次真实生成、相同长前缀、Prefix Cache Block 复用 | FlashAttention、CUDA Graph、Tensor Parallel、抢占和压力测试 |
+| `scripts/prefix_cache_smoke.py` | 两次真实生成、相同长前缀、引擎级 Prefix Cache 命中（第二次请求复用的 cached token 数与实际 prefill token 数） | FlashAttention、CUDA Graph、Tensor Parallel、抢占和压力测试 |
 | `tests/test_attention_backend.py` | PyTorch Attention Prefill、Decode、GQA、KV Cache 写入/读取 | 真实模型权重和 FlashAttention |
 | `tests/test_torch_fallback_smoke.py` | 脚本环境配置与单卡约束 | GPU 模型执行 |
+| `tests/test_prefix_cache_smoke.py` | Prefix Cache 脚本的前缀构造与冷/热 prefill 判定逻辑（纯 CPU） | GPU 模型执行 |
 
 可复现实例：
 

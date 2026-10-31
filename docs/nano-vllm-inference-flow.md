@@ -574,7 +574,7 @@ def hash_blocks(self, seq: Sequence):
 
 只有**写满 256 个 token 的块**才进入哈希表。原因是块是分配单位：一个块被分配就必须整块使用，不能让两个序列共享同一块的不同部分（否则 `slot_mapping` 会冲突）。因此只有满块才满足「块内容 == 完整前缀片段」这个不变式。
 
-> **直接推论**：前缀缓存有 256 token 的粒度成本。300 token 的公共前缀只有第 0 块（满块）可复用，第 1 块（44 token）不可复用，因此 `reusable_prefix_blocks = 1`。
+> **直接推论**：前缀缓存有 256 token 的粒度成本。300 token 的公共前缀只有第 0 块（满块）可复用，第 1 块（44 token）不可复用，因此 `can_allocate` 返回的 `reusable_prefix_blocks = 1`。注意这只是**块管理级别**的判断：真正是否命中，要看 `Scheduler.schedule()` 里第二次请求实际的 `num_cached_tokens` 与 prefill token 数（`scripts/prefix_cache_smoke.py` 现在直接观测这两项）。
 
 #### 4.3.6 `can_allocate` 的三重返回值
 
