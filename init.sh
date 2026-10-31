@@ -5,9 +5,23 @@ cd "$(dirname "$0")"
 
 echo "=== CAI-vLLM harness verification ==="
 
+# 解释器解析：服务器上 `python` 可能不在 PATH 里（例如未激活 conda 环境），
+# 可用 CAI_VLLM_PYTHON 显式指定，例如
+#   CAI_VLLM_PYTHON=/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python bash ./init.sh
+if [[ -n "${CAI_VLLM_PYTHON:-}" ]]; then
+    PY="${CAI_VLLM_PYTHON}"
+elif command -v python >/dev/null 2>&1; then
+    PY="python"
+elif command -v python3 >/dev/null 2>&1; then
+    PY="python3"
+else
+    echo "[FAIL] no python interpreter found; set CAI_VLLM_PYTHON to a Python 3.10-3.12 interpreter"
+    exit 1
+fi
+
 echo "[L0] Environment"
-python --version
-python - <<'PY'
+"$PY" --version
+"$PY" - <<'PY'
 import sys
 
 if not ((3, 10) <= sys.version_info[:2] < (3, 13)):
@@ -16,7 +30,7 @@ print(f"[PASS] Python {sys.version_info.major}.{sys.version_info.minor}")
 PY
 
 echo "[L1] Harness state"
-python - <<'PY'
+"$PY" - <<'PY'
 import json
 from pathlib import Path
 
@@ -34,8 +48,8 @@ print(f"[PASS] one active feature: {active[0]['id']}")
 PY
 
 echo "[L2] Python syntax and package metadata"
-python -m compileall -q nanovllm bench.py example.py
-python - <<'PY'
+"$PY" -m compileall -q nanovllm bench.py example.py
+"$PY" - <<'PY'
 import re
 from pathlib import Path
 
@@ -52,7 +66,7 @@ echo "[PASS] no whitespace errors"
 
 echo "[L4] Runtime dependency and import smoke"
 set +e
-runtime_output="$(python -c 'import torch; import nanovllm; print(f"torch={torch.__version__} cuda={torch.cuda.is_available()}")' 2>&1)"
+runtime_output="$("$PY" -c 'import torch; import nanovllm; print(f"torch={torch.__version__} cuda={torch.cuda.is_available()}")' 2>&1)"
 runtime_status=$?
 set -e
 if [[ $runtime_status -eq 0 ]]; then
