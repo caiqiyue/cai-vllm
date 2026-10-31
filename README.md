@@ -220,6 +220,21 @@ PowerShell 环境可运行：
 CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh
 ```
 
+服务器上没有裸 `python`（conda 环境未激活），用环境内的解释器跑门禁：
+
+```bash
+export CAI_VLLM_PYTHON=/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python
+CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh
+```
+
+在服务器上生成文本（模型路径从命令行传入）：
+
+```bash
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python example.py \
+  /mnt/public/gw/LLM_model/Qwen3-4B-Instruct-2507 \
+  --max-model-len 512 --gpu-memory-utilization 0.85 --max-tokens 32
+```
+
 ## 项目来源
 
 本仓库基于 MIT 许可的 [GeeeekExplorer/nano-vllm](https://github.com/GeeeekExplorer/nano-vllm) 进行学习和维护，不代表上游官方项目。仓库不沿用上游 Git 历史，新增学习笔记、Harness 和后续实验均在 CAI-vLLM 中独立维护。

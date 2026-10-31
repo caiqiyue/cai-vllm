@@ -5,9 +5,10 @@
 - Repository root: `E:\ai-learning\07-inference-and-serving\cai-vllm`
 - Standard startup path: `bash ./init.sh` or `./init.ps1`
 - Standard lightweight verification path: `bash ./init.sh`
-- Full GPU gate: `CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh`
-- Current active feature: `feat-002` — Validate CUDA inference journey
-- Current blocker: local PyTorch fails to load `torch_python.dll`; GPU/runtime smoke must be verified on a supported environment.
+- Full GPU gate: `CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh` (on the server add `export CAI_VLLM_PYTHON=/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python`)
+- Current active feature: `feat-005` — Cover the remaining GPU scheduler paths
+- `feat-002` passed on 2026-10-31 on server GPU 0: harness gate L0–L4 `[PASS]` under `CAI_VLLM_REQUIRE_GPU=1` and `example.py` generated text from the real Qwen3-4B checkpoint.
+- Local blocker (unchanged): this Windows host cannot load `torch_python.dll`, so the local GPU gate stays an explicit `SKIP`.
 - Learner-facing notes: `docs/nano-vllm-inference-flow.md` documents the full inference chain and per-component mechanisms (`feat-004`, passing).
 
 ## Session Log
@@ -67,4 +68,16 @@
 - Change: the script now builds token-level prompts sharing exactly one full block, wraps `llm.scheduler.schedule` to record the engine's real `num_cached_tokens` / `num_scheduled_tokens`, and asserts the cold/warm prefill contract; added `tests/test_prefix_cache_smoke.py` (4 CPU-only cases). No `nanovllm/` source changed.
 - Verification: `python -m unittest tests.test_prefix_cache_smoke tests.test_torch_fallback_smoke -v` → `Ran 5 tests ... OK`; `bash ./init.sh` → L0–L3 `[PASS]`, L4 `[SKIP]` (local PyTorch cannot load `torch_python.dll`, unchanged blocker).
 - Pending: the rewritten script has not been run on server GPU 0 yet; evidence is `evidence/feat-002-2026-10-31-prefix-cache-engine-level.md`. `feat-002` remains the sole `in_progress` feature.
+
+### Session 007 — Server GPU 0 verification and feat-002 completion
+
+- Date: 2026-10-31
+- Goal: push the work to GitHub, pull it on the server, and run the verification there.
+- Push: `44121e8` and `de0114a` pushed to `origin/main`; server pulled with `git pull --ff-only origin main` (HEAD `de0114a`).
+- Prefix cache (server GPU 0, RTX 2080 Ti): `cold prefill_tokens=262 cached_tokens=0`, `warm prefill_tokens=6 cached_tokens=256`, `saved_prefill_tokens=256`, `prefix_cache_hit=YES`.
+- Two blockers found and fixed: `init.sh` used a bare `python` (absent on the server, so the GPU gate died at L0) and `example.py` hard-coded a local model path. `init.sh` now resolves `python` → `python3` and honours `CAI_VLLM_PYTHON`; `example.py` takes the model path and memory limits as arguments.
+- GPU gate on the server: L0–L4 all `[PASS]` with `CAI_VLLM_REQUIRE_GPU=1` (`torch=2.7.1+cu126 cuda=True`); `example.py` returned generated text from `/mnt/public/gw/LLM_model/Qwen3-4B-Instruct-2507`.
+- Status: `feat-002` → `passing`; `feat-005` (remaining GPU scheduler paths) created as the single `in_progress` feature so the harness invariant still holds.
+- Evidence: `evidence/feat-002-2026-10-31-server-gpu0-gate.md` and the updated `evidence/feat-002-2026-10-31-prefix-cache-engine-level.md`.
+- Note: the local server operations manual (`第二阶段_提示词服务器运维终版手册_2026-08-21.md`) stays git-ignored and was not pushed, by explicit request.
 

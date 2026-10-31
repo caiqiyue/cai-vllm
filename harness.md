@@ -46,9 +46,15 @@
 可复现实例：
 
 ```bash
+export CAI_VLLM_PYTHON=/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python
+CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh
 /mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/torch_fallback_smoke.py
 /mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/prefix_cache_smoke.py
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python example.py \
+  /mnt/public/gw/LLM_model/Qwen3-4B-Instruct-2507 --max-model-len 512 --gpu-memory-utilization 0.85
 ```
+
+服务器上没有裸 `python`，`init.sh` 依次解析 `python` → `python3`，也可用 `CAI_VLLM_PYTHON` 显式指定解释器。
 
 该矩阵是当前交接状态的依据；新增或改变验证入口时，应同步更新 `evidence/`、`claude-progress.md` 和 `session-handoff.md`。
 

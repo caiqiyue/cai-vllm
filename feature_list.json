@@ -37,7 +37,7 @@
       "area": "verification",
       "title": "Validate CUDA inference journey",
       "user_visible_behavior": "A contributor with supported NVIDIA hardware can load Qwen3 and generate text through the documented API.",
-      "status": "in_progress",
+      "status": "passing",
       "verification": [
         "Install the project on a supported Linux and CUDA environment",
         "Download or provide a Qwen3-compatible checkpoint",
@@ -46,8 +46,8 @@
         "Record hardware, dependency versions, command, and output in evidence/"
       ],
       "dependencies": ["feat-001"],
-      "evidence": ["evidence/feat-002-2026-10-25-server-gpu0.md", "evidence/feat-002-2026-10-25-torch-fallback.md", "evidence/feat-002-2026-10-25-prefix-cache.md", "evidence/feat-002-2026-10-31-prefix-cache-engine-level.md"],
-      "notes": "Requires CUDA-capable hardware; routine CPU-only startup may explicitly skip this path. The prefix cache smoke script was rewritten to verify the engine-level hit; the rewritten run is still pending on server GPU 0."
+      "evidence": ["evidence/feat-002-2026-10-25-server-gpu0.md", "evidence/feat-002-2026-10-25-torch-fallback.md", "evidence/feat-002-2026-10-25-prefix-cache.md", "evidence/feat-002-2026-10-31-prefix-cache-engine-level.md", "evidence/feat-002-2026-10-31-server-gpu0-gate.md"],
+      "notes": "Passed on server GPU 0 (RTX 2080 Ti, torch 2.7.1+cu126): harness gate L0-L4 all PASS under CAI_VLLM_REQUIRE_GPU=1, and example.py generated text from the real Qwen3-4B checkpoint. init.sh now resolves the interpreter (CAI_VLLM_PYTHON) and example.py takes the model path as an argument, so the documented path runs on the server without manual repair."
     },
     {
       "id": "feat-003",
@@ -84,7 +84,24 @@
       ],
       "dependencies": ["feat-001"],
       "evidence": ["evidence/feat-004-2026-10-29-inference-flow-doc.md"],
-      "notes": "Learning note only; no nanovllm source, test, or runtime script was changed. feat-002 remains the single in_progress feature."
+      "notes": "Learning note only; no nanovllm source, test, or runtime script was changed. feat-002 passed on 2026-10-31; feat-005 is now the single in_progress feature."
+    },
+    {
+      "id": "feat-005",
+      "priority": 5,
+      "area": "verification",
+      "title": "Cover the remaining GPU scheduler paths",
+      "user_visible_behavior": "A contributor with supported NVIDIA hardware can observe preemption, chunked prefill, and CUDA Graph behaviour instead of an empty coverage list.",
+      "status": "in_progress",
+      "verification": [
+        "Drive a preemption and a chunked-prefill scenario on server GPU 0 and record the outputs",
+        "Run one generation with enforce_eager disabled to check the CUDA Graph path",
+        "Confirm every scenario produces evidence under evidence/",
+        "Update harness.md and session-handoff.md with the verified coverage"
+      ],
+      "dependencies": ["feat-002"],
+      "evidence": [],
+      "notes": "Successor to feat-002, which passed on 2026-10-31. Scope is limited to the uncovered runtime paths listed in the handoff; FlashAttention remains blocked on its own build issue and is out of scope."
     }
   ]
 }

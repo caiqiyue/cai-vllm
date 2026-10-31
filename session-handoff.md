@@ -159,3 +159,43 @@ unless the warm request reuses at least one full block and prefills strictly few
 - Unchanged: FlashAttention unresolved, CUDA Graph disabled, Tensor Parallel and scheduler
   preemption / chunked-prefill stress still uncovered.
 
+## Current Handoff Override — 2026-10-31 (server verification)
+
+### State changes this session
+
+| Item | Before | After |
+| --- | --- | --- |
+| `feat-002` | `in_progress` | `passing` |
+| Active feature | `feat-002` | `feat-005` (created) |
+| `init.sh` | hard-coded bare `python` | resolves `python` → `python3`, honours `CAI_VLLM_PYTHON` |
+| `example.py` | hard-coded local model path | model path and memory limits from the command line |
+| `scripts/prefix_cache_smoke.py` | pre-check only | engine-level hit verification (see Session 006) |
+
+### Verified on server GPU 0 (RTX 2080 Ti, torch 2.7.1+cu126)
+
+```text
+[FAIL→PASS] CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh  → L0..L4 all PASS
+[PASS] torch=2.7.1+cu126 cuda=True
+[OK]   example.py generated text from Qwen3-4B-Instruct-2507
+[OK]   prefix cache: cold prefill 262 tokens / warm prefill 6 tokens, cached_tokens=256
+[OK]   unittest: Ran 5 tests ... OK
+```
+
+### Next best step
+
+- `feat-005`: drive preemption, chunked prefill, and one `enforce_eager=False` (CUDA Graph) run
+  on server GPU 0, then record the evidence.
+- The local server operations manual stays git-ignored and unpushed by request.
+
+### Reproduction commands
+
+```bash
+cd /mnt/public/caiqiyue_file/cai-vllm
+git pull --ff-only origin main
+export CAI_VLLM_PYTHON=/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python
+CAI_VLLM_REQUIRE_GPU=1 bash ./init.sh
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/prefix_cache_smoke.py
+/mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python example.py \
+  /mnt/public/gw/LLM_model/Qwen3-4B-Instruct-2507 --max-model-len 512 --gpu-memory-utilization 0.85
+```
+

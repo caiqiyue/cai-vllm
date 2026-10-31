@@ -44,16 +44,28 @@ bash ./init.sh
 - Harness: L0–L3 `[PASS]`, L4 `[SKIP] GPU/runtime smoke unavailable in this environment`
   (local PyTorch cannot load `torch_python.dll`; unchanged known blocker).
 
-## Pending GPU verification (server, GPU 0)
+## GPU verification (server, GPU 0) — DONE 2026-10-31
 
 ```bash
 cd /mnt/public/caiqiyue_file/cai-vllm
+git pull --ff-only origin main
 /mnt/public/caiqiyue_file/conda-envs/cai-vllm/bin/python scripts/prefix_cache_smoke.py
 ```
 
-Expected output shape: `cold prefill_tokens = N`, `warm cached_tokens = 256`,
-`warm prefill_tokens = N-256`, `saved_prefill_tokens = 256`, `prefix_cache_hit=YES`.
+Measured output on the RTX 2080 Ti (GPU 0):
 
-This run has **not** been executed yet; the engine-level numbers above are code-derived, not
-measured. FlashAttention, CUDA Graph, Tensor Parallel, preemption, and chunked-prefill stress
-paths remain outside this run.
+```text
+block_size=256
+cold: prompt_tokens=262 prefill_tokens=262 cached_tokens=0
+warm: prompt_tokens=262 prefill_tokens=6 cached_tokens=256
+saved_prefill_tokens=256
+hash_index_blocks=1
+prefix_cache_hit=YES
+```
+
+The warm request reused 256 cached tokens and prefilled 6 tokens instead of 262, so the engine
+really hits the prefix cache rather than only holding a hash-index entry. Companion evidence:
+`evidence/feat-002-2026-10-31-server-gpu0-gate.md`.
+
+FlashAttention, CUDA Graph, Tensor Parallel, preemption, and chunked-prefill stress paths remain
+outside this run.
